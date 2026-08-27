@@ -1,0 +1,1 @@
+export {default as logcontroll} from "./log.controller.js"

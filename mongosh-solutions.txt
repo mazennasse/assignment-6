@@ -1,0 +1,125 @@
+// Q1
+
+use mydatabase
+db.createCollection("books", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["title"],
+            properties: {
+                title: {
+                    bsonType: "string",
+                    minLength: 1
+                }
+            }
+        }
+    }
+})
+
+
+// Q2
+db.authors.insertOne({"name":"Author1","nationality":"British"})
+
+
+// Q3
+db.createCollection("logs", {
+    capped: true,
+    size: 1024 * 1024
+})
+
+
+//  Q4
+db.books.createIndex({title:1})
+
+//Q5
+db.books.insertOne({"title":"Book1","author":"ali","year":1937,"genres":["fantasy","adventure"]})
+
+
+
+//Q6
+db.books.insertMany([
+    {
+        title: "Book2",
+        author: "Ahmed",
+        year: 2001,
+        genres: ["fiction", "adventure"]
+    },
+    {
+        title: "Book3",
+        author: "Omar",
+        year: 2005,
+        genres: ["fantasy", "mystery"]
+    },
+    {
+        title: "Book4",
+        author: "Mona",
+        year: 2010,
+        genres: ["romance", "fiction"]
+    }
+])
+
+
+//  Q7
+db.logs.insertOne({
+       book_id: ObjectId("6a90276bd2016618192282ba"),
+    action: "borrowed"
+})
+
+
+//Q8
+db.books.updateOne({title:"Future"},{$set:{year:2022}})
+
+
+// Q9
+db.books.findOne({title:"Brave New World"})
+
+// Q10
+db.books.find({year:{$gte:1990,$lte:2010}}).toArray()
+
+//Q11
+db.books.find({genres:"Science Fiction"}).toArray()
+
+// Q12
+db.books.find().sort({year:-1}).skip(2).limit(3).toArray()
+
+//  Q13
+db.books.find({year:{$type:"int"}}).toArray()
+
+//Q14
+db.books.find({genres:{$nin:["Horror", "Science Fiction"]}})
+ 
+ //Q15
+ db.books.deleteMany({year:{$lt:2000}})
+
+ //Q16
+ db.books.aggregate([{$match:{year:{$gt:2000}}},{$sort:{year:-1}}]).toArray()
+
+ // Q17
+db.books.aggregate([{$match:{year:{$gt:2000}}},{$project:{_id:0,title:1,author:1,year:1}}]).toArray()
+
+
+//Q18
+db.books.aggregate([{$unwind:"$genres"},{$project:{_id:0,title:1,genres:1}}]).toArray()
+
+
+//Q19
+db.logs.aggregate([
+    {
+        $lookup: {
+            from: "books",
+            localField: "book_id",
+            foreignField: "_id",
+            as: "book_details"
+        }
+    },
+    {
+        $project: {
+            _id: 0,
+            action: 1,
+            "book_details.title": 1,
+            "book_details.author": 1,
+            "book_details.year": 1
+        }
+    }
+]).toArray()
+

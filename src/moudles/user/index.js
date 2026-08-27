@@ -1,0 +1,1 @@
+export {default as usercontroll} from "./user.controller.js"

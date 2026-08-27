@@ -1,0 +1,1 @@
+export{default as collectioncontroll} from "./collection.controller.js"

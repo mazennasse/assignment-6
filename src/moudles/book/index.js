@@ -1,0 +1,1 @@
+export{default as bookcontrol} from "./book.controller.js"
